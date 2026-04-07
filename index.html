@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="gn">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Arapygua Vakapipopo Ñeha'ã 2026 - Che Ñe'ẽme'ẽ</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Porra Mundial 2026 - Mis Pronósticos</title>
+    <!-- Tailwind CSS para estilos rápidos y responsivos -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- html2pdf.js CDN -->
+    <!-- Librería html2pdf para la exportación a PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -16,17 +16,19 @@
             background-color: #f1f5f9;
         }
 
+        /* Estilo para filas alternas en las tablas de partidos */
         .match-row:nth-child(even) {
             background-color: #f8fafc;
         }
 
+        /* Eliminar flechas por defecto en los inputs de números */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
 
-        /* Aty kuéra sa'y oñembohekóva ta'angakuérape */
+        /* Colores laterales de los grupos según la referencia visual */
         .border-group-A { border-left: 8px solid #adb5bd; }
         .border-group-B { border-left: 8px solid #e03131; }
         .border-group-C { border-left: 8px solid #ffec99; }
@@ -40,6 +42,7 @@
         .border-group-K { border-left: 8px solid #f06595; }
         .border-group-L { border-left: 8px solid #a61e4d; }
 
+        /* Estilo para las banderas de los países */
         .flag-icon {
             width: 20px;
             height: 14px;
@@ -49,6 +52,7 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
 
+        /* Ocultar elementos específicos durante la generación del PDF */
         @media print {
             .no-print { display: none !important; }
         }
@@ -56,31 +60,31 @@
 </head>
 <body class="text-slate-800">
 
-    <!-- Akã: Ta'anga oñemoambue téra rangue -->
+    <!-- Encabezado con la imagen del repositorio -->
     <header class="bg-slate-900 text-white py-6 px-4 shadow-xl mb-10">
         <div class="max-w-6xl mx-auto text-center">
-            <img src="pollamundial.png" alt="[Pollamundial 2026 ra'anga]" class="mx-auto max-h-40 md:max-h-60 w-auto object-contain">
+            <img src="pollamundial2.png" alt="[Imagen de Pollamundial 2026]" class="mx-auto max-h-40 md:max-h-60 w-auto object-contain">
         </div>
     </header>
 
     <main id="app-content" class="max-w-7xl mx-auto px-4 pb-24">
         
-        <!-- ÑE'ẼNDY: OÑEMBOSARÁIVA MARANDUKUÉRA -->
+        <!-- SECCIÓN: DATOS DEL PARTICIPANTE -->
         <section class="mb-10 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
             <div class="flex items-center gap-3 mb-6">
-                <h2 class="text-xl font-extrabold text-slate-900 uppercase tracking-tight">Oñembosaráiva Marandukuéra</h2>
+                <h2 class="text-xl font-extrabold text-slate-900 uppercase tracking-tight">Datos del Participante</h2>
                 <div class="h-1 flex-grow bg-slate-200 rounded-full"></div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label for="participant-name" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Téra Teete (Ta'ãnga'ỹ)</label>
-                    <input type="text" id="participant-name" placeholder="Emoĩ ne téra ko'ápe..." 
+                    <label for="participant-name" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Nombre Completo (Solo texto)</label>
+                    <input type="text" id="participant-name" placeholder="Tu nombre aquí..." 
                         oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')"
                         class="w-full p-3 bg-slate-50 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium">
                 </div>
                 <div>
-                    <label for="participant-phone" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Pumbyry / WhatsApp (Papapy añónte)</label>
-                    <input type="text" id="participant-phone" placeholder="Techapyrã: 0981..." 
+                    <label for="participant-phone" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Teléfono / WhatsApp (Solo números)</label>
+                    <input type="text" id="participant-phone" placeholder="Ej. 5512345678" 
                         inputmode="numeric"
                         oninput="this.value = this.value.replace(/[^0-9]/g, '')"
                         class="w-full p-3 bg-slate-50 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium">
@@ -88,103 +92,103 @@
             </div>
         </section>
 
-        <!-- ÑE'ẼNDY: ÑE'ẼME'Ẽ HA PUNTUACIÓN -->
+        <!-- SECCIÓN: REGLAS Y PUNTAJES -->
         <section class="mb-10 bg-blue-50 p-6 rounded-xl border border-blue-100 shadow-sm">
             <div class="flex items-center gap-3 mb-6">
-                <h2 class="text-xl font-extrabold text-blue-900 uppercase tracking-tight">Ñe'ẽme'ẽ ha Puntuación</h2>
+                <h2 class="text-xl font-extrabold text-blue-900 uppercase tracking-tight">Reglas y Puntajes</h2>
                 <div class="h-1 flex-grow bg-blue-200 rounded-full"></div>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 <div class="bg-white p-4 rounded-lg border border-blue-100 text-center shadow-sm">
                     <span class="block text-2xl font-black text-blue-600">5</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Marcador Teete</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Marcador Exacto</span>
                 </div>
                 <div class="bg-white p-4 rounded-lg border border-blue-100 text-center shadow-sm">
                     <span class="block text-2xl font-black text-blue-400">3</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Ojehuva (G/E)</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Resultado (G/E)</span>
                 </div>
                 <div class="bg-white p-4 rounded-lg border border-yellow-100 text-center shadow-sm">
                     <span class="block text-2xl font-black text-yellow-600">40</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Tenondegua</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Campeón</span>
                 </div>
                 <div class="bg-white p-4 rounded-lg border border-slate-100 text-center shadow-sm">
                     <span class="block text-2xl font-black text-slate-500">30</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Mokõiha</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Subcampeón</span>
                 </div>
                 <div class="bg-white p-4 rounded-lg border border-orange-100 text-center shadow-sm">
                     <span class="block text-2xl font-black text-orange-600">20</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Mbohapyha</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">3º Puesto</span>
                 </div>
                 <div class="bg-white p-4 rounded-lg border border-amber-100 text-center shadow-sm">
                     <span class="block text-2xl font-black text-amber-700">10</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Irundyha</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">4º Puesto</span>
                 </div>
             </div>
         </section>
 
-        <!-- ÑE'ẼNDY: TERAKUÉRA YVATE -->
+        <!-- SECCIÓN: CUADRO DE HONOR -->
         <section class="mb-16">
             <div class="flex items-center gap-3 mb-8">
-                <h2 class="text-2xl font-extrabold text-slate-900 uppercase tracking-tight">Terakuéra Yvate</h2>
+                <h2 class="text-2xl font-extrabold text-slate-900 uppercase tracking-tight">Cuadro de Honor</h2>
                 <div class="h-1 flex-grow bg-slate-200 rounded-full"></div>
             </div>
             
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Peteĩha</span>
-                    <label class="block text-lg font-bold text-slate-800 mb-2">🏆 Tenondegua</label>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Primero</span>
+                    <label class="block text-lg font-bold text-slate-800 mb-2">🏆 Campeón</label>
                     <select id="honor-1" class="honor-select w-full p-2 bg-slate-50 rounded-md border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"></select>
                 </div>
                 <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Mokõiha</span>
-                    <label class="block text-lg font-bold text-slate-800 mb-2">🥈 Mokõiha</label>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Segundo</span>
+                    <label class="block text-lg font-bold text-slate-800 mb-2">🥈 Subcampeón</label>
                     <select id="honor-2" class="honor-select w-full p-2 bg-slate-50 rounded-md border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"></select>
                 </div>
                 <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Mbohapyha</span>
-                    <label class="block text-lg font-bold text-slate-800 mb-2">🥉 Mbohapyha</label>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Tercero</span>
+                    <label class="block text-lg font-bold text-slate-800 mb-2">🥉 Tercer Puesto</label>
                     <select id="honor-3" class="honor-select w-full p-2 bg-slate-50 rounded-md border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"></select>
                 </div>
                 <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Irundyha</span>
-                    <label class="block text-lg font-bold text-slate-800 mb-2">🏅 Irundyha</label>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Cuarto</span>
+                    <label class="block text-lg font-bold text-slate-800 mb-2">🏅 Cuarto Puesto</label>
                     <select id="honor-4" class="honor-select w-full p-2 bg-slate-50 rounded-md border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"></select>
                 </div>
             </div>
         </section>
 
-        <!-- ÑE'ẼNDY: ATY KUÉRA ÑEHA'Ã -->
+        <!-- SECCIÓN: FASE DE GRUPOS -->
         <section class="mb-16">
             <div class="flex items-center gap-3 mb-8">
-                <h2 class="text-2xl font-extrabold text-slate-900 uppercase tracking-tight">Aty Kuéra Ñeha'ã</h2>
+                <h2 class="text-2xl font-extrabold text-slate-900 uppercase tracking-tight">Fase de Grupos</h2>
                 <div class="h-1 flex-grow bg-slate-200 rounded-full"></div>
             </div>
 
             <div id="groups-container" class="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                <!-- Aty kuéra oñemoĩ ko'ápe JS rupive -->
+                <!-- Los grupos se inyectan dinámicamente mediante JavaScript -->
             </div>
         </section>
 
-        <!-- ÑE'ẼNDY: OÑEMBOHU'ÃVA -->
+        <!-- SECCIÓN FINAL: ACCIÓN DE DESCARGA -->
         <section class="mt-20 flex flex-col items-center gap-4 no-print border-t border-slate-200 pt-10">
-            <p class="text-slate-500 font-semibold text-center">¿Rehu'ãmapa ne ñe'ẽme'ẽ? Emboguejy ne kuatia'atã rembohasa hag̃ua.</p>
+            <p class="text-slate-500 font-semibold text-center">¿Has terminado tus pronósticos? Descarga tu archivo para participar.</p>
             <button id="btn-generate-pdf" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black py-5 px-12 rounded-2xl shadow-2xl transform transition hover:scale-105 active:scale-95 flex items-center gap-3 text-xl">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
-                EMBOGUEJY CHE ÑE'ẼME'Ẽ
+                DESCARGAR MIS PRONÓSTICOS
             </button>
-            <p class="text-slate-400 text-xs mt-2 uppercase tracking-widest">PDF kuatia'atã porãite</p>
+            <p class="text-slate-400 text-xs mt-2 uppercase tracking-widest">Formato PDF de alta resolución</p>
         </section>
 
     </main>
 
     <footer class="bg-slate-900 text-slate-500 py-10 text-center">
-        <p class="text-sm">Mundial 2026 - Ñe'ẽme'ẽ Porãite Rendapy</p>
+        <p class="text-sm">Mundial 2026 - Plataforma de Porra Profesional</p>
     </footer>
 
     <script>
-        // Tetã kuéra ISO papapy banderas hag̃ua
+        // Mapeo de países a códigos ISO para obtener las banderas
         const countryCodes = {
             "México": "mx", "Sudáfrica": "za", "Corea del Sur": "kr", "República Checa": "cz",
             "Canadá": "ca", "Bosnia y Herzegovina": "ba", "Catar": "qa", "Suiza": "ch",
@@ -200,8 +204,9 @@
             "Inglaterra": "gb-eng", "Croacia": "hr", "Ghana": "gh", "Panamá": "pa"
         };
 
+        // Datos oficiales del calendario extraídos de las imágenes de referencia
         const worldCupData = [
-            { id: 'A', name: 'Aty A', class: 'border-group-A', matches: [
+            { id: 'A', name: 'Grupo A', class: 'border-group-A', matches: [
                 { date: '11/06', time: '21:00', jor: 'J1', team1: 'México', team2: 'Sudáfrica' },
                 { date: '12/06', time: '4:00', jor: 'J1', team1: 'Corea del Sur', team2: 'República Checa' },
                 { date: '18/06', time: '18:00', jor: 'J2', team1: 'República Checa', team2: 'Sudáfrica' },
@@ -209,7 +214,7 @@
                 { date: '25/06', time: '3:00', jor: 'J3', team1: 'República Checa', team2: 'México' },
                 { date: '25/06', time: '3:00', jor: 'J3', team1: 'Sudáfrica', team2: 'Corea del Sur' }
             ]},
-            { id: 'B', name: 'Aty B', class: 'border-group-B', matches: [
+            { id: 'B', name: 'Grupo B', class: 'border-group-B', matches: [
                 { date: '12/06', time: '21:00', jor: 'J1', team1: 'Canadá', team2: 'Bosnia y Herzegovina' },
                 { date: '13/06', time: '21:00', jor: 'J1', team1: 'Catar', team2: 'Suiza' },
                 { date: '18/06', time: '21:00', jor: 'J2', team1: 'Suiza', team2: 'Bosnia y Herzegovina' },
@@ -217,15 +222,15 @@
                 { date: '24/06', time: '21:00', jor: 'J3', team1: 'Suiza', team2: 'Canadá' },
                 { date: '24/06', time: '21:00', jor: 'J3', team1: 'Bosnia y Herzegovina', team2: 'Catar' }
             ]},
-            { id: 'C', name: 'Aty C', class: 'border-group-C', matches: [
+            { id: 'C', name: 'Grupo C', class: 'border-group-C', matches: [
                 { date: '14/06', time: '0:00', jor: 'J1', team1: 'Brasil', team2: 'Marruecos' },
                 { date: '14/06', time: '3:00', jor: 'J1', team1: 'Haití', team2: 'Escocia' },
                 { date: '20/06', time: '0:00', jor: 'J2', team1: 'Escocia', team2: 'Marruecos' },
                 { date: '20/06', time: '3:00', jor: 'J2', team1: 'Brasil', team2: 'Haití' },
                 { date: '25/06', time: '0:00', jor: 'J3', team1: 'Escocia', team2: 'Brasil' },
-                { date: '25/06', time: '0:00', jor: 'J3', team1: 'Marruecos', team2: 'Haití' }
+                { date: '25/06', time: '0:00', j3: 'J3', team1: 'Marruecos', team2: 'Haití' }
             ]},
-            { id: 'D', name: 'Aty D', class: 'border-group-D', matches: [
+            { id: 'D', name: 'Grupo D', class: 'border-group-D', matches: [
                 { date: '13/06', time: '3:00', jor: 'J1', team1: 'Estados Unidos', team2: 'Paraguay' },
                 { date: '14/06', time: '6:00', jor: 'J1', team1: 'Australia', team2: 'Turquía' },
                 { date: '19/06', time: '21:00', jor: 'J2', team1: 'Estados Unidos', team2: 'Australia' },
@@ -233,15 +238,15 @@
                 { date: '26/06', time: '4:00', jor: 'J3', team1: 'Turquía', team2: 'Estados Unidos' },
                 { date: '26/06', time: '4:00', jor: 'J3', team1: 'Paraguay', team2: 'Australia' }
             ]},
-            { id: 'E', name: 'Aty E', class: 'border-group-E', matches: [
+            { id: 'E', name: 'Grupo E', class: 'border-group-E', matches: [
                 { date: '14/06', time: '19:00', jor: 'J1', team1: 'Alemania', team2: 'Curazao' },
                 { date: '15/06', time: '1:00', jor: 'J1', team1: 'Costa de Marfil', team2: 'Ecuador' },
                 { date: '20/06', time: '22:00', jor: 'J2', team1: 'Alemania', team2: 'Costa de Marfil' },
                 { date: '21/06', time: '2:00', jor: 'J2', team1: 'Ecuador', team2: 'Curazao' },
                 { date: '25/06', time: '22:00', jor: 'J3', team1: 'Curazao', team2: 'Costa de Marfil' },
-                { date: '25/06', time: '22:00', j3: 'J3', team1: 'Ecuador', team2: 'Alemania' }
+                { date: '25/06', time: '22:00', jor: 'J3', team1: 'Ecuador', team2: 'Alemania' }
             ]},
-            { id: 'F', name: 'Aty F', class: 'border-group-F', matches: [
+            { id: 'F', name: 'Grupo F', class: 'border-group-F', matches: [
                 { date: '14/06', time: '22:00', jor: 'J1', team1: 'Países Bajos', team2: 'Japón' },
                 { date: '15/06', time: '4:00', jor: 'J1', team1: 'Suecia', team2: 'Túnez' },
                 { date: '20/06', time: '19:00', jor: 'J2', team1: 'Países Bajos', team2: 'Suecia' },
@@ -249,7 +254,7 @@
                 { date: '26/06', time: '1:00', jor: 'J3', team1: 'Japón', team2: 'Suecia' },
                 { date: '26/06', time: '1:00', jor: 'J3', team1: 'Túnez', team2: 'Países Bajos' }
             ]},
-            { id: 'G', name: 'Aty G', class: 'border-group-G', matches: [
+            { id: 'G', name: 'Grupo G', class: 'border-group-G', matches: [
                 { date: '15/06', time: '21:00', jor: 'J1', team1: 'Bélgica', team2: 'Egipto' },
                 { date: '16/06', time: '3:00', jor: 'J1', team1: 'Irán', team2: 'Nueva Zelanda' },
                 { date: '21/06', time: '21:00', jor: 'J2', team1: 'Bélgica', team2: 'Irán' },
@@ -257,7 +262,7 @@
                 { date: '27/06', time: '5:00', jor: 'J3', team1: 'Egipto', team2: 'Irán' },
                 { date: '27/06', time: '5:00', jor: 'J3', team1: 'Nueva Zelanda', team2: 'Bélgica' }
             ]},
-            { id: 'H', name: 'Aty H', class: 'border-group-H', matches: [
+            { id: 'H', name: 'Grupo H', class: 'border-group-H', matches: [
                 { date: '15/06', time: '18:00', jor: 'J1', team1: 'España', team2: 'Cabo Verde' },
                 { date: '16/06', time: '0:00', jor: 'J1', team1: 'Arabia Saudita', team2: 'Uruguay' },
                 { date: '21/06', time: '18:00', jor: 'J2', team1: 'España', team2: 'Arabia Saudita' },
@@ -265,7 +270,7 @@
                 { date: '27/06', time: '2:00', jor: 'J3', team1: 'Cabo Verde', team2: 'Arabia Saudita' },
                 { date: '27/06', time: '2:00', jor: 'J3', team1: 'Uruguay', team2: 'España' }
             ]},
-            { id: 'I', name: 'Aty I', class: 'border-group-I', matches: [
+            { id: 'I', name: 'Grupo I', class: 'border-group-I', matches: [
                 { date: '16/06', time: '21:00', jor: 'J1', team1: 'Francia', team2: 'Senegal' },
                 { date: '17/06', time: '0:00', jor: 'J1', team1: 'Irak', team2: 'Noruega' },
                 { date: '22/06', time: '23:00', jor: 'J2', team1: 'Francia', team2: 'Irak' },
@@ -273,7 +278,7 @@
                 { date: '26/06', time: '21:00', jor: 'J3', team1: 'Noruega', team2: 'Francia' },
                 { date: '26/06', time: '21:00', jor: 'J3', team1: 'Senegal', team2: 'Irak' }
             ]},
-            { id: 'J', name: 'Aty J', class: 'border-group-J', matches: [
+            { id: 'J', name: 'Grupo J', class: 'border-group-J', matches: [
                 { date: '17/06', time: '3:00', jor: 'J1', team1: 'Argentina', team2: 'Argelia' },
                 { date: '17/06', time: '6:00', jor: 'J1', team1: 'Austria', team2: 'Jordania' },
                 { date: '22/06', time: '19:00', jor: 'J2', team1: 'Argentina', team2: 'Austria' },
@@ -281,7 +286,7 @@
                 { date: '28/06', time: '4:00', jor: 'J3', team1: 'Argelia', team2: 'Austria' },
                 { date: '28/06', time: '4:00', jor: 'J3', team1: 'Jordania', team2: 'Argentina' }
             ]},
-            { id: 'K', name: 'Aty K', class: 'border-group-K', matches: [
+            { id: 'K', name: 'Grupo K', class: 'border-group-K', matches: [
                 { date: '17/06', time: '19:00', jor: 'J1', team1: 'Portugal', team2: 'RD Congo' },
                 { date: '18/06', time: '4:00', jor: 'J1', team1: 'Uzbekistán', team2: 'Colombia' },
                 { date: '23/06', time: '19:00', jor: 'J2', team1: 'Portugal', team2: 'Uzbekistán' },
@@ -289,7 +294,7 @@
                 { date: '28/06', time: '1:30', jor: 'J3', team1: 'Colombia', team2: 'Portugal' },
                 { date: '28/06', time: '1:30', jor: 'J3', team1: 'RD Congo', team2: 'Uzbekistán' }
             ]},
-            { id: 'L', name: 'Aty L', class: 'border-group-L', matches: [
+            { id: 'L', name: 'Grupo L', class: 'border-group-L', matches: [
                 { date: '17/06', time: '22:00', jor: 'J1', team1: 'Inglaterra', team2: 'Croacia' },
                 { date: '18/06', time: '1:00', jor: 'J1', team1: 'Ghana', team2: 'Panamá' },
                 { date: '23/06', time: '22:00', jor: 'J2', team1: 'Inglaterra', team2: 'Ghana' },
@@ -300,7 +305,7 @@
         ];
 
         /**
-         * TEKOIPY: OÑEPYRŨRŨ HAG̃UA
+         * Inicialización de la aplicación al cargar el DOM
          */
         document.addEventListener('DOMContentLoaded', () => {
             renderGroups();
@@ -308,13 +313,18 @@
             setupEventListeners();
         });
 
-        // Tembipuru banderakuéra ohechauka hag̃ua
+        /**
+         * Función para obtener el HTML de la imagen de la bandera de un país
+         */
         function getFlagImg(countryName) {
             const code = countryCodes[countryName];
             if (!code) return '';
             return `<img src="https://flagcdn.com/w40/${code}.png" class="flag-icon" alt="${countryName}" onerror="this.style.display='none'">`;
         }
 
+        /**
+         * Renderiza dinámicamente todos los grupos y sus partidos correspondientes
+         */
         function renderGroups() {
             const container = document.getElementById('groups-container');
             
@@ -323,16 +333,16 @@
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden ${group.class}">
                         <div class="bg-slate-50 px-4 py-3 border-b border-slate-100 flex justify-between items-center">
                             <h3 class="font-black text-slate-800 text-xl tracking-tighter">${group.name}</h3>
-                            <span class="text-[10px] bg-slate-200 px-2 py-1 rounded font-bold text-slate-500 uppercase">Ñepyrũ</span>
+                            <span class="text-[10px] bg-slate-200 px-2 py-1 rounded font-bold text-slate-500 uppercase">Fase Inicial</span>
                         </div>
                         <div class="p-0">
                             <table class="w-full text-left border-collapse">
                                 <thead class="bg-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                                     <tr>
-                                        <th class="px-3 py-2">Ára/Aravo</th>
-                                        <th class="px-3 py-2 text-right">Ógape</th>
+                                        <th class="px-3 py-2">Fecha/Hora</th>
+                                        <th class="px-3 py-2 text-right">Local</th>
                                         <th class="px-2 py-2 text-center w-20">Goles</th>
-                                        <th class="px-3 py-2">Okápe</th>
+                                        <th class="px-3 py-2">Visitante</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -372,6 +382,9 @@
             });
         }
 
+        /**
+         * Llena los selectores del cuadro de honor con la lista de países participantes
+         */
         function populateHonorRoll() {
             const selects = document.querySelectorAll('.honor-select');
             const allTeams = new Set();
@@ -382,7 +395,7 @@
             const sortedTeams = Array.from(allTeams).sort();
             
             selects.forEach(select => {
-                select.innerHTML = '<option value="">Eiporavo tetã...</option>';
+                select.innerHTML = '<option value="">Seleccionar equipo...</option>';
                 sortedTeams.forEach(team => {
                     const option = document.createElement('option');
                     option.value = team;
@@ -392,18 +405,24 @@
             });
         }
 
+        /**
+         * Configura los escuchadores de eventos para la interacción del usuario
+         */
         function setupEventListeners() {
             document.getElementById('btn-generate-pdf').addEventListener('click', async function() {
                 const btn = this;
                 const element = document.getElementById('app-content');
+                
+                // Obtener y limpiar el nombre del participante para el nombre del archivo
                 const rawName = document.getElementById('participant-name').value.trim();
                 const cleanName = rawName.replace(/\s+/g, '_') || 'Participante';
                 const finalFilename = `${cleanName}_Porra_Mundial_2026.pdf`;
 
                 btn.disabled = true;
                 const originalText = btn.innerHTML;
-                btn.textContent = 'OÑEMBOSAKUÁI KUATIA...';
+                btn.textContent = 'GENERANDO ARCHIVO...';
 
+                // Configuración de la librería html2pdf
                 const opt = {
                     margin:       [10, 5, 10, 5],
                     filename:     finalFilename,
@@ -413,9 +432,10 @@
                 };
 
                 try {
+                    // Generar y descargar el PDF
                     await html2pdf().set(opt).from(element).save();
                 } catch (error) {
-                    console.error("Javy:", error);
+                    console.error("Error al generar el PDF:", error);
                 } finally {
                     btn.disabled = false;
                     btn.innerHTML = originalText;
