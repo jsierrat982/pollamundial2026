@@ -2,11 +2,11 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Porra Mundial 2026 - Mis Pronósticos</title>
-    <!-- Tailwind CSS para estilos rápidos y responsivos -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Porra Mundial 2026 - Mis Pronósticos (Mejorada)</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Librería html2pdf para la exportación a PDF -->
+    <!-- html2pdf.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
@@ -16,19 +16,21 @@
             background-color: #f1f5f9;
         }
 
-        /* Estilo para filas alternas en las tablas de partidos */
         .match-row:nth-child(even) {
             background-color: #f8fafc;
         }
 
-        /* Eliminar flechas por defecto en los inputs de números */
         input[type="number"]::-webkit-inner-spin-button,
         input[type="number"]::-webkit-outer-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
 
-        /* Colores laterales de los grupos según la referencia visual */
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+
+        /* Colores de los grupos según las imágenes */
         .border-group-A { border-left: 8px solid #adb5bd; }
         .border-group-B { border-left: 8px solid #e03131; }
         .border-group-C { border-left: 8px solid #ffec99; }
@@ -42,153 +44,185 @@
         .border-group-K { border-left: 8px solid #f06595; }
         .border-group-L { border-left: 8px solid #a61e4d; }
 
-        /* Estilo para las banderas de los países */
         .flag-icon {
-            width: 20px;
-            height: 14px;
+            width: 22px;
+            height: 15px;
             object-fit: cover;
             border-radius: 2px;
             display: inline-block;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.15);
+            vertical-align: middle;
         }
 
-        /* Ocultar elementos específicos durante la generación del PDF */
-        @media print {
-            .no-print { display: none !important; }
+        /* Mejora para tablas responsive */
+        .group-table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .group-table {
+            min-width: 500px;
+        }
+
+        /* Estilo para inputs de goles */
+        .goal-input {
+            transition: all 0.15s ease;
+        }
+        .goal-input:focus {
+            border-color: #10b981;
+            ring: 2px solid #10b981;
+        }
+
+        /* Animación guardado */
+        .save-toast {
+            transition: opacity 0.3s ease;
+        }
+        
+        /* Portada con imagen */
+        .hero-image {
+            width: 100%;
+            object-fit: cover;
+            display: block;
         }
     </style>
 </head>
 <body class="text-slate-800">
 
-    <!-- Encabezado con la imagen del repositorio -->
-    <header class="bg-slate-900 text-white py-6 px-4 shadow-xl mb-10">
-        <div class="max-w-6xl mx-auto text-center">
-            <img src="pollamundial2.png" alt="[Imagen de Pollamundial 2026]" class="mx-auto max-h-40 md:max-h-60 w-auto object-contain">
-        </div>
-    </header>
+    <!-- CABECERA CON IMAGEN (reemplaza el texto anterior) -->
+    <div class="w-full bg-slate-900">
+        <img src="pollamundial.png" alt="Porra Mundial 2026" class="hero-image max-h-[300px] w-full object-contain md:object-cover bg-slate-900">
+    </div>
 
-    <main id="app-content" class="max-w-7xl mx-auto px-4 pb-24">
+    <main class="max-w-7xl mx-auto px-4 pb-24">
         
-        <!-- SECCIÓN: DATOS DEL PARTICIPANTE -->
-        <section class="mb-10 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
-            <div class="flex items-center gap-3 mb-6">
-                <h2 class="text-xl font-extrabold text-slate-900 uppercase tracking-tight">Datos del Participante</h2>
-                <div class="h-1 flex-grow bg-slate-200 rounded-full"></div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label for="participant-name" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Nombre Completo (Solo texto)</label>
-                    <input type="text" id="participant-name" placeholder="Tu nombre aquí..." 
-                        oninput="this.value = this.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '')"
-                        class="w-full p-3 bg-slate-50 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium">
+        <!-- CONTENEDOR PRINCIPAL QUE SE INCLUIRÁ EN EL PDF (sin botones de acción) -->
+        <div id="predictionsContainer">
+            <!-- SECCIÓN: DATOS DEL PARTICIPANTE -->
+            <section class="mb-8 bg-white p-6 rounded-xl border border-slate-200 shadow-sm mt-8">
+                <div class="flex items-center gap-3 mb-6">
+                    <h2 class="text-xl font-extrabold text-slate-900 uppercase tracking-tight">Datos del Participante</h2>
+                    <div class="h-1 flex-grow bg-slate-200 rounded-full"></div>
                 </div>
-                <div>
-                    <label for="participant-phone" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Teléfono / WhatsApp (Solo números)</label>
-                    <input type="text" id="participant-phone" placeholder="Ej. 5512345678" 
-                        inputmode="numeric"
-                        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                        class="w-full p-3 bg-slate-50 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="participant-name" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Nombre Completo (Solo texto)</label>
+                        <input type="text" id="participant-name" placeholder="Ej. Juan Pérez" 
+                            class="w-full p-3 bg-slate-50 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium">
+                    </div>
+                    <div>
+                        <label for="participant-phone" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Teléfono / WhatsApp (Solo números)</label>
+                        <input type="text" id="participant-phone" placeholder="Ej. 5512345678" 
+                            inputmode="numeric"
+                            class="w-full p-3 bg-slate-50 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium">
+                    </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- SECCIÓN: REGLAS Y PUNTAJES -->
-        <section class="mb-10 bg-blue-50 p-6 rounded-xl border border-blue-100 shadow-sm">
-            <div class="flex items-center gap-3 mb-6">
-                <h2 class="text-xl font-extrabold text-blue-900 uppercase tracking-tight">Reglas y Puntajes</h2>
-                <div class="h-1 flex-grow bg-blue-200 rounded-full"></div>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div class="bg-white p-4 rounded-lg border border-blue-100 text-center shadow-sm">
-                    <span class="block text-2xl font-black text-blue-600">5</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Marcador Exacto</span>
+            <!-- SECCIÓN: REGLAS Y PUNTAJES -->
+            <section class="mb-8 bg-blue-50 p-6 rounded-xl border border-blue-100 shadow-sm">
+                <div class="flex items-center gap-3 mb-6">
+                    <h2 class="text-xl font-extrabold text-blue-900 uppercase tracking-tight">Reglas y Puntajes</h2>
+                    <div class="h-1 flex-grow bg-blue-200 rounded-full"></div>
                 </div>
-                <div class="bg-white p-4 rounded-lg border border-blue-100 text-center shadow-sm">
-                    <span class="block text-2xl font-black text-blue-400">3</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Resultado (G/E)</span>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <div class="bg-white p-4 rounded-lg border border-blue-100 text-center shadow-sm">
+                        <span class="block text-2xl font-black text-blue-600">5</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Marcador Exacto</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-blue-100 text-center shadow-sm">
+                        <span class="block text-2xl font-black text-blue-400">3</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Resultado (G/E)</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-yellow-100 text-center shadow-sm">
+                        <span class="block text-2xl font-black text-yellow-600">40</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Campeón</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-slate-100 text-center shadow-sm">
+                        <span class="block text-2xl font-black text-slate-500">30</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Subcampeón</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-orange-100 text-center shadow-sm">
+                        <span class="block text-2xl font-black text-orange-600">20</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">3º Puesto</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-lg border border-amber-100 text-center shadow-sm">
+                        <span class="block text-2xl font-black text-amber-700">10</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">4º Puesto</span>
+                    </div>
                 </div>
-                <div class="bg-white p-4 rounded-lg border border-yellow-100 text-center shadow-sm">
-                    <span class="block text-2xl font-black text-yellow-600">40</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Campeón</span>
-                </div>
-                <div class="bg-white p-4 rounded-lg border border-slate-100 text-center shadow-sm">
-                    <span class="block text-2xl font-black text-slate-500">30</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Subcampeón</span>
-                </div>
-                <div class="bg-white p-4 rounded-lg border border-orange-100 text-center shadow-sm">
-                    <span class="block text-2xl font-black text-orange-600">20</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">3º Puesto</span>
-                </div>
-                <div class="bg-white p-4 rounded-lg border border-amber-100 text-center shadow-sm">
-                    <span class="block text-2xl font-black text-amber-700">10</span>
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">4º Puesto</span>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- SECCIÓN: CUADRO DE HONOR -->
-        <section class="mb-16">
-            <div class="flex items-center gap-3 mb-8">
-                <h2 class="text-2xl font-extrabold text-slate-900 uppercase tracking-tight">Cuadro de Honor</h2>
-                <div class="h-1 flex-grow bg-slate-200 rounded-full"></div>
-            </div>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Primero</span>
-                    <label class="block text-lg font-bold text-slate-800 mb-2">🏆 Campeón</label>
-                    <select id="honor-1" class="honor-select w-full p-2 bg-slate-50 rounded-md border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"></select>
+            <!-- SECCIÓN: CUADRO DE HONOR -->
+            <section class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <h2 class="text-2xl font-extrabold text-slate-900 uppercase tracking-tight">Cuadro de Honor</h2>
+                    <div class="h-1 flex-grow bg-slate-200 rounded-full"></div>
                 </div>
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Segundo</span>
-                    <label class="block text-lg font-bold text-slate-800 mb-2">🥈 Subcampeón</label>
-                    <select id="honor-2" class="honor-select w-full p-2 bg-slate-50 rounded-md border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"></select>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Puesto 1</span>
+                        <label class="block text-lg font-bold text-slate-800 mb-2">🏆 Campeón</label>
+                        <select id="honor-1" class="honor-select w-full p-2 bg-slate-50 rounded-md border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"></select>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Puesto 2</span>
+                        <label class="block text-lg font-bold text-slate-800 mb-2">🥈 Subcampeón</label>
+                        <select id="honor-2" class="honor-select w-full p-2 bg-slate-50 rounded-md border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"></select>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Puesto 3</span>
+                        <label class="block text-lg font-bold text-slate-800 mb-2">🥉 Tercer Lugar</label>
+                        <select id="honor-3" class="honor-select w-full p-2 bg-slate-50 rounded-md border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"></select>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Puesto 4</span>
+                        <label class="block text-lg font-bold text-slate-800 mb-2">🏅 Cuarto Lugar</label>
+                        <select id="honor-4" class="honor-select w-full p-2 bg-slate-50 rounded-md border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"></select>
+                    </div>
                 </div>
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Tercero</span>
-                    <label class="block text-lg font-bold text-slate-800 mb-2">🥉 Tercer Puesto</label>
-                    <select id="honor-3" class="honor-select w-full p-2 bg-slate-50 rounded-md border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"></select>
-                </div>
-                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Cuarto</span>
-                    <label class="block text-lg font-bold text-slate-800 mb-2">🏅 Cuarto Puesto</label>
-                    <select id="honor-4" class="honor-select w-full p-2 bg-slate-50 rounded-md border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"></select>
-                </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- SECCIÓN: FASE DE GRUPOS -->
-        <section class="mb-16">
-            <div class="flex items-center gap-3 mb-8">
-                <h2 class="text-2xl font-extrabold text-slate-900 uppercase tracking-tight">Fase de Grupos</h2>
-                <div class="h-1 flex-grow bg-slate-200 rounded-full"></div>
-            </div>
+            <!-- SECCIÓN: FASE DE GRUPOS -->
+            <section class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <h2 class="text-2xl font-extrabold text-slate-900 uppercase tracking-tight">Fase de Grupos</h2>
+                    <div class="h-1 flex-grow bg-slate-200 rounded-full"></div>
+                </div>
+                <div id="groups-container" class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+                    <!-- Los grupos se inyectan aquí -->
+                </div>
+            </section>
+        </div>
 
-            <div id="groups-container" class="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                <!-- Los grupos se inyectan dinámicamente mediante JavaScript -->
+        <!-- SECCIÓN DE ACCIONES (NO SE INCLUYE EN EL PDF) -->
+        <section class="mt-8 flex flex-col items-center gap-4 border-t border-slate-200 pt-8 no-print">
+            <div class="flex flex-wrap justify-center gap-3">
+                <button id="btn-clear-all" class="bg-red-100 hover:bg-red-200 text-red-700 font-bold py-3 px-6 rounded-xl shadow-md transition flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                    Limpiar todos mis pronósticos
+                </button>
+                <div id="autoSaveIndicator" class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 shadow-sm">
+                    <span>💾</span> <span id="saveStatusText">Guardado automático</span>
+                </div>
             </div>
-        </section>
-
-        <!-- SECCIÓN FINAL: ACCIÓN DE DESCARGA -->
-        <section class="mt-20 flex flex-col items-center gap-4 no-print border-t border-slate-200 pt-10">
-            <p class="text-slate-500 font-semibold text-center">¿Has terminado tus pronósticos? Descarga tu archivo para participar.</p>
-            <button id="btn-generate-pdf" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black py-5 px-12 rounded-2xl shadow-2xl transform transition hover:scale-105 active:scale-95 flex items-center gap-3 text-xl">
+            <p class="text-slate-500 font-semibold text-center mt-2">✨ Todos tus pronósticos se guardan automáticamente en el navegador ✨</p>
+            <button id="btn-generate-pdf" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black py-5 px-12 rounded-2xl shadow-2xl transform transition hover:scale-105 active:scale-95 flex items-center gap-3 text-xl mt-4">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
-                DESCARGAR MIS PRONÓSTICOS
+                DESCARGAR MIS PRONÓSTICOS (PDF)
             </button>
-            <p class="text-slate-400 text-xs mt-2 uppercase tracking-widest">Formato PDF de alta resolución</p>
+            <p class="text-slate-400 text-xs mt-2 uppercase tracking-widest">Formato PDF de alta resolución | Sin botones ni elementos extra</p>
         </section>
-
     </main>
 
-    <footer class="bg-slate-900 text-slate-500 py-10 text-center">
-        <p class="text-sm">Mundial 2026 - Plataforma de Porra Profesional</p>
+    <footer class="bg-slate-900 text-slate-500 py-8 text-center mt-8">
+        <p class="text-sm">Mundial 2026 - Plataforma de Porra Profesional | Guardado automático local</p>
     </footer>
 
     <script>
-        // Mapeo de países a códigos ISO para obtener las banderas
+        // ======================== DATOS DE EQUIPOS Y BANDERAS ========================
         const countryCodes = {
             "México": "mx", "Sudáfrica": "za", "Corea del Sur": "kr", "República Checa": "cz",
             "Canadá": "ca", "Bosnia y Herzegovina": "ba", "Catar": "qa", "Suiza": "ch",
@@ -204,7 +238,6 @@
             "Inglaterra": "gb-eng", "Croacia": "hr", "Ghana": "gh", "Panamá": "pa"
         };
 
-        // Datos oficiales del calendario extraídos de las imágenes de referencia
         const worldCupData = [
             { id: 'A', name: 'Grupo A', class: 'border-group-A', matches: [
                 { date: '11/06', time: '21:00', jor: 'J1', team1: 'México', team2: 'Sudáfrica' },
@@ -228,7 +261,7 @@
                 { date: '20/06', time: '0:00', jor: 'J2', team1: 'Escocia', team2: 'Marruecos' },
                 { date: '20/06', time: '3:00', jor: 'J2', team1: 'Brasil', team2: 'Haití' },
                 { date: '25/06', time: '0:00', jor: 'J3', team1: 'Escocia', team2: 'Brasil' },
-                { date: '25/06', time: '0:00', j3: 'J3', team1: 'Marruecos', team2: 'Haití' }
+                { date: '25/06', time: '0:00', jor: 'J3', team1: 'Marruecos', team2: 'Haití' }
             ]},
             { id: 'D', name: 'Grupo D', class: 'border-group-D', matches: [
                 { date: '13/06', time: '3:00', jor: 'J1', team1: 'Estados Unidos', team2: 'Paraguay' },
@@ -304,76 +337,62 @@
             ]}
         ];
 
-        /**
-         * Inicialización de la aplicación al cargar el DOM
-         */
-        document.addEventListener('DOMContentLoaded', () => {
-            renderGroups();
-            populateHonorRoll();
-            setupEventListeners();
-        });
-
-        /**
-         * Función para obtener el HTML de la imagen de la bandera de un país
-         */
+        // Helper bandera
         function getFlagImg(countryName) {
             const code = countryCodes[countryName];
             if (!code) return '';
-            return `<img src="https://flagcdn.com/w40/${code}.png" class="flag-icon" alt="${countryName}" onerror="this.style.display='none'">`;
+            return `<img src="https://flagcdn.com/w40/${code}.png" class="flag-icon" alt="${countryName}" loading="lazy" onerror="this.style.display='none'">`;
         }
 
-        /**
-         * Renderiza dinámicamente todos los grupos y sus partidos correspondientes
-         */
+        // Render grupos con IDs únicos para persistencia
         function renderGroups() {
             const container = document.getElementById('groups-container');
-            
+            container.innerHTML = '';
             worldCupData.forEach(group => {
+                let matchesHtml = '';
+                group.matches.forEach((match, idx) => {
+                    const homeId = `goal_${group.id}_${idx}_home`;
+                    const awayId = `goal_${group.id}_${idx}_away`;
+                    matchesHtml += `
+                        <tr class="match-row border-b border-slate-50 last:border-0 text-sm">
+                            <td class="px-3 py-3 leading-tight">
+                                <div class="font-bold text-slate-700">${match.date}</div>
+                                <div class="text-[10px] text-slate-400">${match.time} | ${match.jor}</div>
+                            </td>
+                            <td class="px-3 py-3 text-right font-medium text-slate-600">
+                                <div class="flex items-center justify-end gap-2">
+                                    <span class="truncate max-w-[100px] sm:max-w-none" title="${match.team1}">${match.team1}</span>
+                                    ${getFlagImg(match.team1)}
+                                </div>
+                            </td>
+                            <td class="px-2 py-3">
+                                <div class="flex items-center justify-center gap-1">
+                                    <input type="number" min="0" max="30" placeholder="-" id="${homeId}" class="goal-input w-10 h-10 text-center bg-white border border-slate-200 rounded font-bold text-emerald-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all">
+                                    <span class="text-slate-300 font-bold">-</span>
+                                    <input type="number" min="0" max="30" placeholder="-" id="${awayId}" class="goal-input w-10 h-10 text-center bg-white border border-slate-200 rounded font-bold text-emerald-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all">
+                                </div>
+                            </td>
+                            <td class="px-3 py-3 font-medium text-slate-600">
+                                <div class="flex items-center justify-start gap-2">
+                                    ${getFlagImg(match.team2)}
+                                    <span class="truncate max-w-[100px] sm:max-w-none" title="${match.team2}">${match.team2}</span>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                });
                 const groupHTML = `
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden ${group.class}">
                         <div class="bg-slate-50 px-4 py-3 border-b border-slate-100 flex justify-between items-center">
                             <h3 class="font-black text-slate-800 text-xl tracking-tighter">${group.name}</h3>
                             <span class="text-[10px] bg-slate-200 px-2 py-1 rounded font-bold text-slate-500 uppercase">Fase Inicial</span>
                         </div>
-                        <div class="p-0">
-                            <table class="w-full text-left border-collapse">
+                        <div class="group-table-wrapper">
+                            <table class="w-full text-left border-collapse group-table">
                                 <thead class="bg-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                                    <tr>
-                                        <th class="px-3 py-2">Fecha/Hora</th>
-                                        <th class="px-3 py-2 text-right">Local</th>
-                                        <th class="px-2 py-2 text-center w-20">Goles</th>
-                                        <th class="px-3 py-2">Visitante</th>
-                                    </tr>
+                                    <tr><th class="px-3 py-2">Fecha/Hora</th><th class="px-3 py-2 text-right">Local</th><th class="px-2 py-2 text-center w-24">Goles</th><th class="px-3 py-2">Visitante</th></tr>
                                 </thead>
-                                <tbody>
-                                    ${group.matches.map(m => `
-                                        <tr class="match-row border-b border-slate-50 last:border-0 text-sm">
-                                            <td class="px-3 py-3 leading-tight">
-                                                <div class="font-bold text-slate-700">${m.date}</div>
-                                                <div class="text-[10px] text-slate-400">${m.time} | ${m.jor}</div>
-                                            </td>
-                                            <td class="px-3 py-3 text-right font-medium text-slate-600">
-                                                <div class="flex items-center justify-end gap-2">
-                                                    <span class="truncate max-w-[100px] sm:max-w-none" title="${m.team1}">${m.team1}</span>
-                                                    ${getFlagImg(m.team1)}
-                                                </div>
-                                            </td>
-                                            <td class="px-2 py-3">
-                                                <div class="flex items-center justify-center gap-1">
-                                                    <input type="number" min="0" placeholder="-" class="w-8 h-8 text-center bg-white border border-slate-200 rounded font-bold text-emerald-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all">
-                                                    <span class="text-slate-300">-</span>
-                                                    <input type="number" min="0" placeholder="-" class="w-8 h-8 text-center bg-white border border-slate-200 rounded font-bold text-emerald-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all">
-                                                </div>
-                                            </td>
-                                            <td class="px-3 py-3 font-medium text-slate-600">
-                                                <div class="flex items-center justify-start gap-2">
-                                                    ${getFlagImg(m.team2)}
-                                                    <span class="truncate max-w-[100px] sm:max-w-none" title="${m.team2}">${m.team2}</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    `).join('')}
-                                </tbody>
+                                <tbody>${matchesHtml}</tbody>
                             </table>
                         </div>
                     </div>
@@ -382,18 +401,12 @@
             });
         }
 
-        /**
-         * Llena los selectores del cuadro de honor con la lista de países participantes
-         */
+        // Llenar selects del cuadro de honor
         function populateHonorRoll() {
-            const selects = document.querySelectorAll('.honor-select');
             const allTeams = new Set();
-            worldCupData.forEach(g => g.matches.forEach(m => {
-                allTeams.add(m.team1);
-                allTeams.add(m.team2);
-            }));
+            worldCupData.forEach(g => g.matches.forEach(m => { allTeams.add(m.team1); allTeams.add(m.team2); }));
             const sortedTeams = Array.from(allTeams).sort();
-            
+            const selects = document.querySelectorAll('.honor-select');
             selects.forEach(select => {
                 select.innerHTML = '<option value="">Seleccionar equipo...</option>';
                 sortedTeams.forEach(team => {
@@ -405,43 +418,123 @@
             });
         }
 
-        /**
-         * Configura los escuchadores de eventos para la interacción del usuario
-         */
-        function setupEventListeners() {
-            document.getElementById('btn-generate-pdf').addEventListener('click', async function() {
-                const btn = this;
-                const element = document.getElementById('app-content');
-                
-                // Obtener y limpiar el nombre del participante para el nombre del archivo
-                const rawName = document.getElementById('participant-name').value.trim();
-                const cleanName = rawName.replace(/\s+/g, '_') || 'Participante';
+        // Guardar todo en localStorage
+        function saveToLocalStorage() {
+            const data = {
+                participantName: document.getElementById('participant-name')?.value || '',
+                participantPhone: document.getElementById('participant-phone')?.value || '',
+                honor1: document.getElementById('honor-1')?.value || '',
+                honor2: document.getElementById('honor-2')?.value || '',
+                honor3: document.getElementById('honor-3')?.value || '',
+                honor4: document.getElementById('honor-4')?.value || '',
+                goals: {}
+            };
+            const allGoalInputs = document.querySelectorAll('#groups-container input[type="number"]');
+            allGoalInputs.forEach(input => {
+                if (input.id) data.goals[input.id] = input.value;
+            });
+            localStorage.setItem('worldcup_predictions_v2', JSON.stringify(data));
+            const statusSpan = document.getElementById('saveStatusText');
+            if (statusSpan) {
+                statusSpan.innerText = '✓ Guardado ahora';
+                setTimeout(() => { if(statusSpan) statusSpan.innerText = 'Guardado automático'; }, 1500);
+            }
+        }
+
+        // Cargar datos desde localStorage
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('worldcup_predictions_v2');
+            if (!saved) return;
+            try {
+                const data = JSON.parse(saved);
+                if (data.participantName !== undefined) document.getElementById('participant-name').value = data.participantName;
+                if (data.participantPhone !== undefined) document.getElementById('participant-phone').value = data.participantPhone;
+                if (data.honor1) document.getElementById('honor-1').value = data.honor1;
+                if (data.honor2) document.getElementById('honor-2').value = data.honor2;
+                if (data.honor3) document.getElementById('honor-3').value = data.honor3;
+                if (data.honor4) document.getElementById('honor-4').value = data.honor4;
+                if (data.goals) {
+                    for (const [id, val] of Object.entries(data.goals)) {
+                        const input = document.getElementById(id);
+                        if (input && val !== undefined && val !== '') input.value = val;
+                    }
+                }
+            } catch(e) { console.warn(e); }
+        }
+
+        // Limpiar todos los datos
+        function clearAllPredictions() {
+            if (!confirm('⚠️ ¿Estás seguro? Se borrarán TODOS tus pronósticos (nombre, teléfono, goles y cuadro de honor). Esta acción no se puede deshacer.')) return;
+            document.getElementById('participant-name').value = '';
+            document.getElementById('participant-phone').value = '';
+            document.querySelectorAll('.honor-select').forEach(select => select.value = '');
+            document.querySelectorAll('#groups-container input[type="number"]').forEach(input => input.value = '');
+            localStorage.removeItem('worldcup_predictions_v2');
+            const statusSpan = document.getElementById('saveStatusText');
+            if (statusSpan) statusSpan.innerText = '🗑️ Todo limpiado';
+            setTimeout(() => { if(statusSpan) statusSpan.innerText = 'Guardado automático'; }, 2000);
+        }
+
+        // Configurar eventos de auto-guardado
+        function setupAutoSave() {
+            const container = document.getElementById('predictionsContainer');
+            container.addEventListener('input', (e) => {
+                if (e.target.matches('input[type="number"], #participant-name, #participant-phone')) saveToLocalStorage();
+            });
+            container.addEventListener('change', (e) => {
+                if (e.target.matches('.honor-select')) saveToLocalStorage();
+            });
+            const nameInput = document.getElementById('participant-name');
+            const phoneInput = document.getElementById('participant-phone');
+            if(nameInput) nameInput.addEventListener('blur', () => saveToLocalStorage());
+            if(phoneInput) phoneInput.addEventListener('blur', () => saveToLocalStorage());
+            document.querySelectorAll('.honor-select').forEach(sel => sel.addEventListener('change', () => saveToLocalStorage()));
+        }
+
+        // Configurar PDF
+        function setupPDF() {
+            const btn = document.getElementById('btn-generate-pdf');
+            btn.addEventListener('click', async function() {
+                const element = document.getElementById('predictionsContainer');
+                if (!element) return;
+                const rawName = document.getElementById('participant-name')?.value.trim() || 'Participante';
+                const cleanName = rawName.replace(/[^a-zA-Z0-9áéíóúñÑ_]/g, '_').substring(0, 40) || 'Participante';
                 const finalFilename = `${cleanName}_Porra_Mundial_2026.pdf`;
-
                 btn.disabled = true;
-                const originalText = btn.innerHTML;
-                btn.textContent = 'GENERANDO ARCHIVO...';
-
-                // Configuración de la librería html2pdf
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '⏳ GENERANDO PDF...';
                 const opt = {
-                    margin:       [10, 5, 10, 5],
-                    filename:     finalFilename,
-                    image:        { type: 'jpeg', quality: 0.98 },
-                    html2canvas:  { scale: 2, useCORS: true, logging: false },
-                    jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                    margin: [8, 6, 8, 6],
+                    filename: finalFilename,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2, useCORS: true, logging: false, letterRendering: true },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
                 };
-
                 try {
-                    // Generar y descargar el PDF
                     await html2pdf().set(opt).from(element).save();
-                } catch (error) {
-                    console.error("Error al generar el PDF:", error);
-                } finally {
+                } catch (err) { console.error(err); alert('Error al generar PDF, intenta de nuevo.'); }
+                finally {
                     btn.disabled = false;
-                    btn.innerHTML = originalText;
+                    btn.innerHTML = originalHTML;
                 }
             });
         }
+
+        // Inicialización completa
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGroups();
+            populateHonorRoll();
+            loadFromLocalStorage();
+            setupAutoSave();
+            setupPDF();
+            const clearBtn = document.getElementById('btn-clear-all');
+            if (clearBtn) clearBtn.addEventListener('click', clearAllPredictions);
+            const phoneField = document.getElementById('participant-phone');
+            if(phoneField) phoneField.addEventListener('input', (e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ''); saveToLocalStorage(); });
+            const nameField = document.getElementById('participant-name');
+            if(nameField) nameField.addEventListener('input', (e) => { e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, ''); saveToLocalStorage(); });
+            saveToLocalStorage();
+        });
     </script>
 </body>
 </html>
