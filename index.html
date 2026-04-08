@@ -30,7 +30,7 @@
             -moz-appearance: textfield;
         }
 
-        /* Colores de los grupos según las imágenes */
+        /* Colores de los grupos según imágenes de referencia */
         .border-group-A { border-left: 8px solid #adb5bd; }
         .border-group-B { border-left: 8px solid #e03131; }
         .border-group-C { border-left: 8px solid #ffec99; }
@@ -54,7 +54,6 @@
             vertical-align: middle;
         }
 
-        /* Mejora para tablas responsive */
         .group-table-wrapper {
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
@@ -64,26 +63,19 @@
             min-width: 500px;
         }
 
-        /* Estilo para inputs de goles */
         .goal-input {
             transition: all 0.15s ease;
         }
         .goal-input:focus {
             border-color: #10b981;
-            ring: 2px solid #10b981;
+            box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
         }
 
-        /* Portada con imagen */
-        .hero-image {
-            width: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* Forzar visibilidad en PDF */
-        .pdf-content-active {
-            background-color: white !important;
-            color: black !important;
+        /* Estilos específicos para impresión/PDF */
+        @media print {
+            .no-print { display: none !important; }
+            body { background-color: white; }
+            #predictionsContainer { padding: 0; margin: 0; }
         }
     </style>
 </head>
@@ -91,42 +83,41 @@
 
     <!-- CABECERA CON IMAGEN -->
     <div class="w-full bg-slate-900 no-print">
-        <img src="pollamundial.png" alt="Porra Mundial 2026" class="hero-image max-h-[300px] w-full object-contain md:object-cover bg-slate-900">
+        <img src="pollamundial.png" alt="Porra Mundial 2026" class="w-full max-h-[300px] object-contain md:object-cover mx-auto" onerror="this.style.display='none'">
     </div>
 
-    <main class="max-w-7xl mx-auto px-4 pb-24">
+    <main class="max-w-7xl mx-auto px-4 pb-24 pt-8">
         
-        <!-- CONTENEDOR PRINCIPAL QUE SE INCLUIRÁ EN EL PDF -->
-        <div id="predictionsContainer" class="p-2 md:p-4">
+        <!-- CONTENEDOR PRINCIPAL PARA EL PDF -->
+        <div id="predictionsContainer">
             
-            <!-- Logo para el PDF (se ve solo al imprimir) -->
-            <div class="hidden print-only mb-6 text-center">
-                <img src="pollamundial.png" alt="Porra Mundial 2026" class="mx-auto max-h-32 object-contain">
+            <!-- Encabezado para el PDF -->
+            <div class="hidden print:block mb-8 text-center border-b pb-4">
+                <h1 class="text-3xl font-black uppercase">Mis Pronósticos Mundial 2026</h1>
             </div>
 
             <!-- SECCIÓN: DATOS DEL PARTICIPANTE -->
-            <section class="mb-8 bg-white p-6 rounded-xl border border-slate-200 shadow-sm mt-8">
+            <section class="mb-10 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
                 <div class="flex items-center gap-3 mb-6">
                     <h2 class="text-xl font-extrabold text-slate-900 uppercase tracking-tight">Datos del Participante</h2>
                     <div class="h-1 flex-grow bg-slate-200 rounded-full"></div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label for="participant-name" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Nombre Completo (Solo texto)</label>
+                        <label for="participant-name" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Nombre Completo</label>
                         <input type="text" id="participant-name" placeholder="Ej. Juan Pérez" 
-                            class="w-full p-3 bg-slate-50 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium">
+                            class="w-full p-3 bg-slate-50 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
                     </div>
                     <div>
-                        <label for="participant-phone" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Teléfono / WhatsApp (Solo números)</label>
+                        <label for="participant-phone" class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Teléfono / WhatsApp</label>
                         <input type="text" id="participant-phone" placeholder="Ej. 5512345678" 
-                            inputmode="numeric"
-                            class="w-full p-3 bg-slate-50 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium">
+                            class="w-full p-3 bg-slate-50 rounded-lg border border-slate-200 focus:ring-2 focus:ring-emerald-500 outline-none font-medium">
                     </div>
                 </div>
             </section>
 
             <!-- SECCIÓN: REGLAS Y PUNTAJES -->
-            <section class="mb-8 bg-blue-50 p-6 rounded-xl border border-blue-100 shadow-sm">
+            <section class="mb-10 bg-blue-50 p-6 rounded-xl border border-blue-100 shadow-sm">
                 <div class="flex items-center gap-3 mb-6">
                     <h2 class="text-xl font-extrabold text-blue-900 uppercase tracking-tight">Reglas y Puntajes</h2>
                     <div class="h-1 flex-grow bg-blue-200 rounded-full"></div>
@@ -134,27 +125,27 @@
                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                     <div class="bg-white p-4 rounded-lg border border-blue-100 text-center shadow-sm">
                         <span class="block text-2xl font-black text-blue-600">5</span>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Marcador Exacto</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase leading-tight">Marcador Exacto</span>
                     </div>
                     <div class="bg-white p-4 rounded-lg border border-blue-100 text-center shadow-sm">
                         <span class="block text-2xl font-black text-blue-400">3</span>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Resultado (G/E)</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase leading-tight">Resultado (G/E)</span>
                     </div>
                     <div class="bg-white p-4 rounded-lg border border-yellow-100 text-center shadow-sm">
                         <span class="block text-2xl font-black text-yellow-600">40</span>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Campeón</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase leading-tight">Campeón</span>
                     </div>
                     <div class="bg-white p-4 rounded-lg border border-slate-100 text-center shadow-sm">
                         <span class="block text-2xl font-black text-slate-500">30</span>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">Subcampeón</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase leading-tight">Subcampeón</span>
                     </div>
                     <div class="bg-white p-4 rounded-lg border border-orange-100 text-center shadow-sm">
                         <span class="block text-2xl font-black text-orange-600">20</span>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">3º Puesto</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase leading-tight">3º Puesto</span>
                     </div>
                     <div class="bg-white p-4 rounded-lg border border-amber-100 text-center shadow-sm">
                         <span class="block text-2xl font-black text-amber-700">10</span>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-tight">4º Puesto</span>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase leading-tight">4º Puesto</span>
                     </div>
                 </div>
             </section>
@@ -197,39 +188,38 @@
                     <div class="h-1 flex-grow bg-slate-200 rounded-full"></div>
                 </div>
                 <div id="groups-container" class="grid grid-cols-1 xl:grid-cols-2 gap-8">
-                    <!-- Los grupos se inyectan dinámicamente -->
+                    <!-- Los grupos se inyectan dinámicamente aquí -->
                 </div>
             </section>
         </div>
 
         <!-- SECCIÓN DE ACCIONES (NO SE INCLUYE EN EL PDF) -->
-        <section class="mt-8 flex flex-col items-center gap-4 border-t border-slate-200 pt-8 no-print">
-            <div class="flex flex-wrap justify-center gap-3">
-                <button id="btn-clear-all" class="bg-red-100 hover:bg-red-200 text-red-700 font-bold py-3 px-6 rounded-xl shadow-md transition flex items-center gap-2">
+        <section class="mt-8 flex flex-col items-center gap-6 border-t border-slate-200 pt-8 no-print">
+            <div class="flex flex-wrap justify-center gap-4">
+                <button id="btn-clear-all" class="bg-red-100 hover:bg-red-200 text-red-700 font-bold py-3 px-6 rounded-xl shadow-sm transition flex items-center gap-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
-                    Limpiar todos mis pronósticos
+                    Limpiar todo
                 </button>
-                <div id="autoSaveIndicator" class="bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-xs font-bold flex items-center gap-2 shadow-sm">
-                    <span>💾</span> <span id="saveStatusText">Guardado automático</span>
+                <div id="autoSaveIndicator" class="bg-emerald-50 text-emerald-700 px-5 py-3 rounded-xl text-sm font-bold flex items-center gap-2 shadow-sm">
+                    <span>💾</span> <span id="saveStatusText">Guardado automático activo</span>
                 </div>
             </div>
-            <p class="text-slate-500 font-semibold text-center mt-2">✨ Tus pronósticos se guardan automáticamente en tu navegador ✨</p>
-            <button id="btn-generate-pdf" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black py-5 px-12 rounded-2xl shadow-2xl transform transition hover:scale-105 active:scale-95 flex items-center gap-3 text-xl mt-4">
+            
+            <button id="btn-generate-pdf" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black py-5 px-14 rounded-2xl shadow-xl transform transition hover:scale-105 active:scale-95 flex items-center gap-4 text-xl">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
-                DESCARGAR MIS PRONÓSTICOS (PDF)
+                DESCARGAR PRONÓSTICOS (PDF)
             </button>
-            <p class="text-slate-400 text-xs mt-2 uppercase tracking-widest text-center max-w-md">El archivo PDF incluirá todos tus datos y pronósticos de forma legible.</p>
         </section>
     </main>
 
     <footer class="bg-slate-900 text-slate-500 py-8 text-center no-print">
-        <p class="text-sm">Mundial 2026 - Plataforma de Porra Profesional</p>
+        <p class="text-sm tracking-widest uppercase font-bold">Mundial 2026 - Porra Profesional</p>
     </footer>
 
     <script>
-        // ======================== DATOS Y CONFIGURACIÓN ========================
+        // ======================== DATOS OFICIALES ========================
         const countryCodes = {
             "México": "mx", "Sudáfrica": "za", "Corea del Sur": "kr", "República Checa": "cz",
             "Canadá": "ca", "Bosnia y Herzegovina": "ba", "Catar": "qa", "Suiza": "ch",
@@ -349,12 +339,14 @@
         function getFlagImg(countryName) {
             const code = countryCodes[countryName];
             if (!code) return '';
-            return `<img src="https://flagcdn.com/w40/${code}.png" class="flag-icon" alt="${countryName}" loading="lazy" onerror="this.style.display='none'">`;
+            return `<img src="https://flagcdn.com/w40/${code}.png" class="flag-icon" alt="${countryName}" loading="lazy">`;
         }
 
         function renderGroups() {
             const container = document.getElementById('groups-container');
+            if (!container) return;
             container.innerHTML = '';
+
             worldCupData.forEach(group => {
                 let matchesHtml = '';
                 group.matches.forEach((match, idx) => {
@@ -364,7 +356,7 @@
                         <tr class="match-row border-b border-slate-50 last:border-0 text-sm">
                             <td class="px-3 py-3 leading-tight">
                                 <div class="font-bold text-slate-700">${match.date}</div>
-                                <div class="text-[10px] text-slate-400">${match.time} | ${match.jor}</div>
+                                <div class="text-[10px] text-slate-400 uppercase font-medium">${match.time} | ${match.jor}</div>
                             </td>
                             <td class="px-3 py-3 text-right font-medium text-slate-600">
                                 <div class="flex items-center justify-end gap-2">
@@ -374,9 +366,11 @@
                             </td>
                             <td class="px-2 py-3">
                                 <div class="flex items-center justify-center gap-1">
-                                    <input type="number" min="0" placeholder="-" id="${homeId}" class="goal-input w-10 h-10 text-center bg-white border border-slate-200 rounded font-bold text-emerald-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all">
+                                    <input type="number" min="0" placeholder="-" id="${homeId}" 
+                                        class="goal-input w-10 h-10 text-center bg-white border border-slate-200 rounded font-bold text-emerald-600 focus:outline-none">
                                     <span class="text-slate-300 font-bold">-</span>
-                                    <input type="number" min="0" placeholder="-" id="${awayId}" class="goal-input w-10 h-10 text-center bg-white border border-slate-200 rounded font-bold text-emerald-600 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 outline-none transition-all">
+                                    <input type="number" min="0" placeholder="-" id="${awayId}" 
+                                        class="goal-input w-10 h-10 text-center bg-white border border-slate-200 rounded font-bold text-emerald-600 focus:outline-none">
                                 </div>
                             </td>
                             <td class="px-3 py-3 font-medium text-slate-600">
@@ -388,16 +382,22 @@
                         </tr>
                     `;
                 });
+
                 const groupHTML = `
                     <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden ${group.class}">
                         <div class="bg-slate-50 px-4 py-3 border-b border-slate-100 flex justify-between items-center">
                             <h3 class="font-black text-slate-800 text-xl tracking-tighter">${group.name}</h3>
-                            <span class="text-[10px] bg-slate-200 px-2 py-1 rounded font-bold text-slate-500 uppercase">Fase Inicial</span>
+                            <span class="text-[10px] bg-white border px-2 py-1 rounded font-bold text-slate-500 uppercase">Fase Inicial</span>
                         </div>
                         <div class="group-table-wrapper">
                             <table class="w-full text-left border-collapse group-table">
                                 <thead class="bg-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                                    <tr><th class="px-3 py-2">Fecha/Hora</th><th class="px-3 py-2 text-right">Local</th><th class="px-2 py-2 text-center w-24">Goles</th><th class="px-3 py-2">Visitante</th></tr>
+                                    <tr>
+                                        <th class="px-3 py-2">Fecha / Hora</th>
+                                        <th class="px-3 py-2 text-right">Local</th>
+                                        <th class="px-2 py-2 text-center w-24">Goles</th>
+                                        <th class="px-3 py-2">Visitante</th>
+                                    </tr>
                                 </thead>
                                 <tbody>${matchesHtml}</tbody>
                             </table>
@@ -424,40 +424,38 @@
             });
         }
 
-        // ======================== PERSISTENCIA Y UTILIDADES ========================
+        // ======================== FUNCIONES DE SISTEMA ========================
 
         function syncInputAttributes() {
-            // CRÍTICO: Sincronizar el valor actual con el atributo 'value' para que html2canvas lo vea
-            const inputs = document.querySelectorAll('input');
-            inputs.forEach(input => {
+            // Sincroniza el valor actual con el atributo 'value' para que html2canvas los capture en el PDF
+            document.querySelectorAll('input').forEach(input => {
                 input.setAttribute('value', input.value);
             });
-            const selects = document.querySelectorAll('select');
-            selects.forEach(select => {
-                const selectedText = select.options[select.selectedIndex]?.text || "";
-                // Como los selects no se renderizan bien en PDF, les podemos poner una clase o atributo
-                // O simplemente confiar en que el clon del DOM mantenga la selección (html2pdf suele hacerlo)
+            document.querySelectorAll('select').forEach(select => {
+                const selected = select.options[select.selectedIndex]?.text || "No elegido";
+                // Añadimos un pequeño marcador temporal para el PDF si es necesario
             });
         }
 
         function saveToLocalStorage() {
             const data = {
-                participantName: document.getElementById('participant-name')?.value || '',
-                participantPhone: document.getElementById('participant-phone')?.value || '',
-                honor1: document.getElementById('honor-1')?.value || '',
-                honor2: document.getElementById('honor-2')?.value || '',
-                honor3: document.getElementById('honor-3')?.value || '',
-                honor4: document.getElementById('honor-4')?.value || '',
+                participantName: document.getElementById('participant-name').value,
+                participantPhone: document.getElementById('participant-phone').value,
+                honor1: document.getElementById('honor-1').value,
+                honor2: document.getElementById('honor-2').value,
+                honor3: document.getElementById('honor-3').value,
+                honor4: document.getElementById('honor-4').value,
                 goals: {}
             };
             document.querySelectorAll('#groups-container input').forEach(input => {
                 if (input.id) data.goals[input.id] = input.value;
             });
             localStorage.setItem('worldcup_v2_data', JSON.stringify(data));
+            
             const status = document.getElementById('saveStatusText');
             if (status) {
-                status.innerText = '✓ Guardado';
-                setTimeout(() => status.innerText = 'Guardado automático', 1500);
+                status.innerText = '✓ Pronósticos guardados';
+                setTimeout(() => status.innerText = 'Guardado automático activo', 2000);
             }
         }
 
@@ -478,18 +476,78 @@
                         if (el) el.value = data.goals[id];
                     });
                 }
-            } catch(e) { console.error(e); }
+            } catch(e) { console.error("Error cargando datos:", e); }
         }
 
-        // ======================== EXPORTACIÓN PDF CORREGIDA ========================
+        // ======================== INICIALIZACIÓN ========================
 
-        async function generatePDF() {
-            const btn = document.getElementById('btn-generate-pdf');
-            const element = document.getElementById('predictionsContainer');
-            
-            // Sincronización previa de atributos para evitar campos en blanco
-            syncInputAttributes();
+        document.addEventListener('DOMContentLoaded', () => {
+            renderGroups();
+            populateHonorRoll();
+            loadFromLocalStorage();
 
-            const rawName = document.getElementById('participant-name')?.value.trim() || 'Participante';
-            const cleanName = rawName.replace(/[^a-zA-Z0-9]/g, '_') || 'Mi_Porra';
-            const filename = `${cleanName}_Mundial_2026.
+            // Guardado automático al escribir
+            const mainContainer = document.getElementById('predictionsContainer');
+            mainContainer.addEventListener('input', saveToLocalStorage);
+            mainContainer.addEventListener('change', saveToLocalStorage);
+
+            // Botón Limpiar
+            document.getElementById('btn-clear-all').addEventListener('click', () => {
+                if (confirm('⚠️ ¿Estás seguro de borrar todos tus pronósticos? Esta acción no se puede deshacer.')) {
+                    localStorage.removeItem('worldcup_v2_data');
+                    window.location.reload();
+                }
+            });
+
+            // Botón PDF con corrección de "hoja en blanco"
+            document.getElementById('btn-generate-pdf').addEventListener('click', async function() {
+                const btn = this;
+                const element = document.getElementById('predictionsContainer');
+                
+                // 1. Sincronizar valores actuales con atributos DOM
+                syncInputAttributes();
+
+                const rawName = document.getElementById('participant-name').value.trim() || 'Participante';
+                const filename = `${rawName.replace(/\s+/g, '_')}_Mundial_2026.pdf`;
+
+                btn.disabled = true;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '⏳ GENERANDO ARCHIVO...';
+
+                const opt = {
+                    margin: [10, 5, 10, 5],
+                    filename: filename,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { 
+                        scale: 2, 
+                        useCORS: true, 
+                        logging: false,
+                        scrollX: 0,
+                        scrollY: 0
+                    },
+                    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+                };
+
+                try {
+                    await new Promise(resolve => setTimeout(resolve, 300)); // Pequeña espera para render
+                    await html2pdf().set(opt).from(element).save();
+                } catch (err) {
+                    console.error(err);
+                    alert("Error al generar el PDF. Por favor intenta de nuevo.");
+                } finally {
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            });
+
+            // Validaciones
+            document.getElementById('participant-phone').addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            });
+            document.getElementById('participant-name').addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');
+            });
+        });
+    </script>
+</body>
+</html>
